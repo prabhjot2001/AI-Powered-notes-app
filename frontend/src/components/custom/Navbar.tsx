@@ -8,12 +8,12 @@ const Navbar = () => {
       <div>
         <Logo />
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-2">
         <Link to="/login" className="hover:underline decoration-primary">
-          Login
+          <Button variant={"secondary"}>Login</Button>
         </Link>
         <Link to="/register" className="hover:underline decoration-primary">
-          Register
+          <Button>Register</Button>
         </Link>
       </div>
     </nav>

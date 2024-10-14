@@ -1,20 +1,15 @@
 import React from "react";
-import ThemeSwitch from "./components/ThemeSwitch";
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/custom/Layout";
+import HomePage from "./pages/HomePage";
 
 const App = () => {
   return (
-    <>
-      <div>
-        <ThemeSwitch />
-      </div>
-      <button className="btn">Button</button>
-      <button className="btn btn-neutral">Neutral</button>
-      <button className="btn btn-primary">Primary</button>
-      <button className="btn btn-secondary">Secondary</button>
-      <button className="btn btn-accent">Accent</button>
-      <button className="btn btn-ghost">Ghost</button>
-      <button className="btn btn-link">Link</button>
-    </>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route path="/" element={<HomePage />} />
+      </Route>
+    </Routes>
   );
 };
 

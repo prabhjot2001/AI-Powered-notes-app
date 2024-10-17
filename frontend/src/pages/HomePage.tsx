@@ -81,11 +81,12 @@ const HomePage = () => {
                       Delete
                     </Button>
                     <Button
+                      asChild
                       variant={"secondary"}
                       size={"sm"}
                       className="text-xs"
                     >
-                      Update
+                      <Link to={`/update-note/${note.id}`}>Update</Link>
                     </Button>
                   </PopoverContent>
                 </Popover>

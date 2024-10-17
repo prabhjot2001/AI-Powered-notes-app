@@ -6,6 +6,7 @@ import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import NotePage from "./pages/NotePage";
 import AddNotePage from "./pages/AddNotePage";
+import UpdateNotePage from "./pages/UpdateNotePage";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/notes/:id" element={<NotePage />} />
         <Route path="/add-note" element={<AddNotePage />} />
+        <Route path="/update-note/:id" element={<UpdateNotePage />} />
       </Route>
     </Routes>
   );

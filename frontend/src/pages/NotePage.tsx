@@ -5,6 +5,7 @@ import { SERVER_URL } from "@/constants/env";
 import { Ellipsis } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/custom/Modal";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   Popover,
@@ -70,8 +71,13 @@ const NotePage = () => {
             >
               Delete
             </Button>
-            <Button variant={"secondary"} size={"sm"} className="text-xs">
-              Update
+            <Button
+              asChild
+              variant={"secondary"}
+              size={"sm"}
+              className="text-xs"
+            >
+               <Link to={`/update-note/${id}`}>Update</Link>
             </Button>
           </PopoverContent>
         </Popover>

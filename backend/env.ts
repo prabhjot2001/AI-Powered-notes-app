@@ -8,4 +8,6 @@ const getEnv = (key: string, defaultValue?: string) => {
 
 const PORT = getEnv("PORT", "8081");
 const APP_ORIGIN = getEnv("APP_ORIGIN");
-export { PORT, APP_ORIGIN };
+const TEST_ORIGIN = getEnv("TEST_ORIGIN");
+const URL = getEnv("URL");
+export { PORT, APP_ORIGIN, TEST_ORIGIN, URL };

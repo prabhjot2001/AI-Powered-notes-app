@@ -87,7 +87,7 @@ const NotePage = () => {
       </h2>
 
       <div
-        className="rich-text"
+        className="rich-text mt-6"
         dangerouslySetInnerHTML={{ __html: note.content }}
       />
 

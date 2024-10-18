@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import "react-quill/dist/quill.snow.css";  
-import ReactQuill from "react-quill";     
+import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "@/constants/env";
@@ -12,7 +12,7 @@ const UpdateNotePage = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState({
     title: "",
-    content: "", 
+    content: "",
     createdAt: "",
   });
 
@@ -32,22 +32,24 @@ const UpdateNotePage = () => {
     fetchSingleNote();
   }, [id]);
 
-
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   }
 
-
   function handleContentChange(value: string) {
     setFormData({ ...formData, content: value });
   }
 
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!formData.title || !formData.content) {
+      return toast.error("Title and notes cannot be empty");
+    }
     try {
-      const response = await axios.patch(`${SERVER_URL}/${id}`, { ...formData });
+      const response = await axios.patch(`${SERVER_URL}/${id}`, {
+        ...formData,
+      });
       if (response.status === 200) {
         toast.success("Note updated successfully");
       } else {

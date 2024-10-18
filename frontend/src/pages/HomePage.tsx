@@ -53,7 +53,7 @@ const HomePage = () => {
           notes.map((note) => (
             <div
               key={note.id}
-              className="border p-2 rounded space-y-1 hover:bg-primary-foreground"
+              className="border p-2 rounded space-y-1 transition-all ease-in-out duration-200 hover:shadow-sm hover:cursor-pointer hover:bg-primary/5"
             >
               <div className="flex items-center justify-between gap-4">
                 <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
@@ -88,7 +88,7 @@ const HomePage = () => {
 
               <div
                 className="leading-7 [&:not(:first-child)]:mt-6"
-                dangerouslySetInnerHTML={{ __html: note.content.slice(0, 100) }}
+                dangerouslySetInnerHTML={{ __html: note.content.slice(0, 50) }}
               />
 
               <div className="flex items-center justify-between gap-6">

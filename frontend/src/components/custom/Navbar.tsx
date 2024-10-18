@@ -20,7 +20,7 @@ const Navbar = () => {
         {NavLinks.map((link, idx) => (
           <li key={idx}>
             <Link to={link.path} className="hover:underline decoration-primary">
-              <Button>{link.link}</Button>
+              <Button className="capitalize">{link.link}</Button>
             </Link>
           </li>
         ))}
@@ -55,12 +55,22 @@ const Navbar = () => {
           </div>
           <ul className="space-y-2 p-4">
             {NavLinks.map((link, idx) => (
-              <li key={idx} onClick={()=>{setIsSidebarOpen(false)}}>
+              <li
+                key={idx}
+                onClick={() => {
+                  setIsSidebarOpen(false);
+                }}
+              >
                 <Link
                   to={link.path}
                   className="hover:underline decoration-primary"
                 >
-                  <Button className="w-full">{link.link}</Button>
+                  <Button
+                    variant={`${link.link === "add note" ? "default" : "secondary"}`}
+                    className="w-full capitalize"
+                  >
+                    {link.link}
+                  </Button>
                 </Link>
               </li>
             ))}

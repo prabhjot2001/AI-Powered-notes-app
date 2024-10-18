@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
 import { SERVER_URL } from "@/constants/env";
 import toast from "react-hot-toast";
 
@@ -10,15 +11,22 @@ const AddNotePage = () => {
     title: "",
     content: "",
   });
+
   function handleChange(e: any) {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   }
+
+  function handleContentChange(value: string) {
+    setFormData({ ...formData, content: value });
+  }
+
   async function handleSubmit(e: any) {
     e.preventDefault();
     if (!formData.title || !formData.content) {
       return toast.error("Title and notes cannot be empty");
     }
+
     const response = await fetch(`${SERVER_URL}`, {
       method: "POST",
       headers: {
@@ -27,11 +35,14 @@ const AddNotePage = () => {
       },
       body: JSON.stringify(formData),
     });
+
     if (response.ok) {
-      setFormData({ ...formData, title: "", content: "" });
+      setFormData({ ...formData, content: "", title: "" });
+      // console.log(formData)
       toast.success("Note is added");
     }
   }
+
   return (
     <>
       <h1 className="scroll-m-20 text-2xl font-bold tracking-tight lg:text-3xl">
@@ -45,11 +56,13 @@ const AddNotePage = () => {
             value={formData.title}
             onChange={handleChange}
           />
-          <Textarea
-            placeholder="Your note here..."
-            name="content"
+
+          <ReactQuill
+            theme="snow"
             value={formData.content}
-            onChange={handleChange}
+            onChange={handleContentChange}
+            placeholder="Your note here..."
+            className="rounded-md"
           />
           <Button>Submit</Button>
         </form>

@@ -77,7 +77,7 @@ const NotePage = () => {
               size={"sm"}
               className="text-xs"
             >
-               <Link to={`/update-note/${id}`}>Update</Link>
+              <Link to={`/update-note/${id}`}>Update</Link>
             </Button>
           </PopoverContent>
         </Popover>
@@ -85,7 +85,20 @@ const NotePage = () => {
       <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
         {note.title}
       </h2>
-      <p className="leading-7 [&:not(:first-child)]:mt-6">{note.content}</p>
+
+      <div
+        className="rich-text"
+        dangerouslySetInnerHTML={{ __html: note.content }}
+      />
+
+      <div className="py-6">
+        <p className="text-xs text-muted-foreground">
+          Created At : {note.createdAt.slice(0, 10)}
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Last modified on : {note.updatedAt.slice(0, 10)}
+        </p>
+      </div>
 
       {/* modal */}
       <Modal

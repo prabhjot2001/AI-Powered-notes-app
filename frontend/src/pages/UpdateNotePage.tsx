@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import "react-quill/dist/quill.snow.css";  
+import ReactQuill from "react-quill";     
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "@/constants/env";
@@ -11,32 +12,49 @@ const UpdateNotePage = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState({
     title: "",
-    content: "",
+    content: "", 
     createdAt: "",
   });
+
   useEffect(() => {
     const fetchSingleNote = async () => {
-      const response = await axios.get(`${SERVER_URL}/${id}`);
-      setFormData({
-        ...formData,
-        title: response.data.title,
-        content: response.data.content,
-        createdAt: response.data.createdAt,
-      });
+      try {
+        const response = await axios.get(`${SERVER_URL}/${id}`);
+        setFormData({
+          title: response.data.title,
+          content: response.data.content,
+          createdAt: response.data.createdAt,
+        });
+      } catch (error) {
+        toast.error("Failed to fetch note data");
+      }
     };
     fetchSingleNote();
-  }, []);
+  }, [id]);
 
-  function handleChange(e) {
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   }
 
-  async function handleSubmit(e) {
+
+  function handleContentChange(value: string) {
+    setFormData({ ...formData, content: value });
+  }
+
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const response = await axios.patch(`${SERVER_URL}/${id}`,{...formData});
-    if (response.statusText === "OK") {
-      toast.success("Note updated successfully");
+    try {
+      const response = await axios.patch(`${SERVER_URL}/${id}`, { ...formData });
+      if (response.status === 200) {
+        toast.success("Note updated successfully");
+      } else {
+        toast.error("Failed to update the note");
+      }
+    } catch (error) {
+      toast.error("Error updating note");
     }
   }
 
@@ -53,13 +71,14 @@ const UpdateNotePage = () => {
             value={formData.title}
             onChange={handleChange}
           />
-          <Textarea
-            placeholder="Your note here..."
-            name="content"
+
+          <ReactQuill
+            theme="snow"
             value={formData.content}
-            onChange={handleChange}
+            onChange={handleContentChange}
+            placeholder="Your note here..."
           />
-          <Button>Update</Button>
+          <Button type="submit">Update</Button>
         </form>
       </div>
     </div>

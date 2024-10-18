@@ -4,14 +4,17 @@ import App from "./App.tsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "./components/theme-provider.tsx";
-import React from 'react';
-import { Toaster } from 'react-hot-toast';
+import React from "react";
+import { Toaster } from "react-hot-toast";
+import NotesContextProvider from "./context/NotesContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <App />
+        <NotesContextProvider>
+          <App />
+        </NotesContextProvider>
         <Toaster />
       </ThemeProvider>
     </BrowserRouter>

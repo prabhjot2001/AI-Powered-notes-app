@@ -1,4 +1,4 @@
-import {useState} from "react";
+import { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import * as React from "react";
+import useNotesContext from "@/hooks/useNotesContext";
 
 type NotesType = {
   id: string;
@@ -17,42 +18,41 @@ type NotesType = {
   createdAt: string;
   updatedAt: string;
 };
-type sortByProps = {
-  notes: NotesType[];
-  setNotes: (value: NotesType[]) => void;
-};
-const SortBy = ({ notes, setNotes }: sortByProps) => {
 
+const SortBy = () => {
+  const { notes, dispatch } = useNotesContext();
   function sortByDateCreated() {
     const data = [...notes].sort(
-      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
-    //console.log(data);
-   setNotes(data);
+    dispatch({ type: "SET_NOTES", payload: data });
   }
+
   function sortByRecentlyModified() {
-	const data = [...notes].sort(
-      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    const data = [...notes].sort(
+      (a, b) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     );
-    //console.log(data);
-   setNotes(data);
-}
+    dispatch({ type: "SET_NOTES", payload: data });
+  }
 
   function sortByAlphabeticalOrder() {
-	const sortedNotes = [...notes].sort((a,b)=>a.title.localeCompare(b.title));
-	setNotes(sortedNotes);
-}
- function handleChange(e){
-	if(e=="date-created"){
-		sortByDateCreated();
-	}
-	else if(e=="alphabetically"){
-		sortByAlphabeticalOrder();
-	}
-	else if(e=="recently-updated"){
-		sortByRecentlyModified();
-	}
-}
+    const sortedNotes = [...notes].sort((a, b) =>
+      a.title.localeCompare(b.title)
+    );
+    dispatch({ type: "SET_NOTES", payload: sortedNotes });
+  }
+
+  function handleChange(e) {
+    if (e == "date-created") {
+      sortByDateCreated();
+    } else if (e == "alphabetically") {
+      sortByAlphabeticalOrder();
+    } else if (e == "recently-updated") {
+      sortByRecentlyModified();
+    }
+  }
   return (
     <div>
       <Select onValueChange={handleChange}>

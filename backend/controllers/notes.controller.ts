@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { prisma } from "../prisma_client/prisma";
+import sanitizeHtml from "sanitize-html";
 
 export const getAllNotes = async (req: Request, res: Response) => {
   try {
@@ -36,6 +37,7 @@ export const getSingleNote = async (req: Request, res: Response) => {
 
 export const createNote = async (req: Request, res: Response) => {
   const { title, content } = req.body;
+  const sanitizedContent = sanitizeHtml(content);
   try {
     const note = await prisma.note.create({
       data: {

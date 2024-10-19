@@ -103,6 +103,13 @@ const HomePage = () => {
               </div>
             </div>
           ))}
+
+        {!notes ||
+          (notes.length <= 0 && (
+            <div>
+              <img src="" />
+            </div>
+          ))}
       </div>
     </main>
   );

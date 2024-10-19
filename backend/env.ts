@@ -10,4 +10,6 @@ const PORT = getEnv("PORT", "8081");
 const APP_ORIGIN = getEnv("APP_ORIGIN");
 const TEST_ORIGIN = getEnv("TEST_ORIGIN");
 const URL = getEnv("URL");
-export { PORT, APP_ORIGIN, TEST_ORIGIN, URL };
+const JWT_SECRET = getEnv("JWT_SECRET");
+
+export { PORT, APP_ORIGIN, TEST_ORIGIN, URL, JWT_SECRET };

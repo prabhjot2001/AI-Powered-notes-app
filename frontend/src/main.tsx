@@ -7,14 +7,17 @@ import { ThemeProvider } from "./components/theme-provider.tsx";
 import React from "react";
 import { Toaster } from "react-hot-toast";
 import NotesContextProvider from "./context/NotesContext.tsx";
+import UserAuthContextProvider from "./context/UserAuthContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <NotesContextProvider>
-          <App />
-        </NotesContextProvider>
+        <UserAuthContextProvider>
+          <NotesContextProvider>
+            <App />
+          </NotesContextProvider>
+        </UserAuthContextProvider>
         <Toaster />
       </ThemeProvider>
     </BrowserRouter>

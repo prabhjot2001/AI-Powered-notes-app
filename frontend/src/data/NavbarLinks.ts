@@ -9,11 +9,6 @@ const NavLinks = [
     path: "/register",
     onClick: () => {},
   },
-  {
-    link: "add note",
-    path: "/add-note",
-    onClick: () => {},
-  },
 ];
 
 export default NavLinks;

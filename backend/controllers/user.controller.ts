@@ -22,7 +22,6 @@ const formatUser = (user: {
 
 export const register = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
-
   try {
     if (!name || !email || !password) {
       return res.status(400).json({ msg: "All fields are required" });
@@ -69,7 +68,6 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-
   try {
     if (!email || !password) {
       return res.status(400).json({ msg: "Email and password are required" });

@@ -62,7 +62,7 @@ const SortBy = () => {
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Select</SelectLabel>
-            <SelectItem value="date-created">Date created</SelectItem>
+            <SelectItem value="date-created">Latest</SelectItem>
             <SelectItem value="recently-updated">Recently Updated</SelectItem>
             <SelectItem value="alphabetically">Alphabetically</SelectItem>
           </SelectGroup>

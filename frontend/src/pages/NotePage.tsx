@@ -30,11 +30,26 @@ const initialNote: NoteType = {
 
 const NotePage = () => {
   const navigate = useNavigate();
+  const storedData = localStorage.getItem("notes-user-token");
+
+  if (!storedData) {
+    console.error("No token found");
+    toast.error("Not authenticated. Please log in.");
+    return;
+  }
+
+  const { token } = JSON.parse(storedData);
   const [note, setNote] = useState<NoteType>(initialNote);
   const { id } = useParams();
   useEffect(() => {
     const fetchSingleNote = async () => {
-      const response = await axios.get(`${SERVER_URL}/${id}`);
+      const response = await axios.get(`${SERVER_URL}/${id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
       setNote(response.data);
     };
     fetchSingleNote();
@@ -46,7 +61,12 @@ const NotePage = () => {
   const handleOpen = () => setModalOpen(true);
   const handleClose = () => setModalOpen(false);
   const handleConfirm = async () => {
-    const response = await axios.delete(`${SERVER_URL}/${id}`);
+    const response = await axios.delete(`${SERVER_URL}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
     if (response.statusText === "OK") {
       handleClose();
       navigate("/");

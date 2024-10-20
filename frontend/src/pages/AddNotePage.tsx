@@ -7,39 +7,60 @@ import { SERVER_URL } from "@/constants/env";
 import toast from "react-hot-toast";
 
 const AddNotePage = () => {
+  const storedData = localStorage.getItem("notes-user-token");
+
+  if (!storedData) {
+    console.error("No token found");
+    toast.error("Not authenticated. Please log in.");
+    return;
+  }
+
+  const { token } = JSON.parse(storedData);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
   });
 
-  function handleChange(e: any) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   }
 
   function handleContentChange(value: string) {
-    setFormData({ ...formData, content: value });
+    setFormData((prevData) => ({
+      ...prevData,
+      content: value,
+    }));
   }
 
-  async function handleSubmit(e: any) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!formData.title || !formData.content) {
       return toast.error("Title and notes cannot be empty");
     }
 
-    const response = await fetch(`${SERVER_URL}`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
+    try {
+      const response = await fetch(`${SERVER_URL}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    if (response.ok) {
-      setFormData({ ...formData, content: "", title: "" });
-      // console.log(formData)
-      toast.success("Note is added");
+      if (response.ok) {
+        setFormData({ title: "", content: "" });
+        toast.success("Note is added");
+      } else {
+        toast.error("Failed to add note");
+      }
+    } catch (error) {
+      toast.error("An error occurred");
+      // console.error("Error adding note:", error);
     }
   }
 
@@ -64,7 +85,7 @@ const AddNotePage = () => {
             placeholder="Your note here..."
             className="rounded-md"
           />
-          <Button>Submit</Button>
+          <Button type="submit">Submit</Button>
         </form>
       </div>
     </>

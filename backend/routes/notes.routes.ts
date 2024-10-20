@@ -6,9 +6,11 @@ import {
   getSingleNote,
   updateNote,
 } from "../controllers/notes.controller";
+import VerifyUser from "../middleware/VerifyUser";
 
 const router = express.Router();
 
+router.use(VerifyUser);
 router.get("/", getAllNotes);
 router.get("/:id", getSingleNote);
 router.post("/", createNote);

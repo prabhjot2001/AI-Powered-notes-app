@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -97,3 +96,8 @@
   border-radius: 6px;
   min-height: 200px;
 }
+.icon-btn {
+  @apply capitalize w-full flex items-center justify-between gap-2;
+}
+
+

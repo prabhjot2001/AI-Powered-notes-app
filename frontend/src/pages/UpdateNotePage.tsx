@@ -10,6 +10,15 @@ import toast from "react-hot-toast";
 
 const UpdateNotePage = () => {
   const { id } = useParams();
+  const storedData = localStorage.getItem("notes-user-token");
+
+  if (!storedData) {
+    console.error("No token found");
+    toast.error("Not authenticated. Please log in.");
+    return;
+  }
+
+  const { token } = JSON.parse(storedData);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -19,7 +28,12 @@ const UpdateNotePage = () => {
   useEffect(() => {
     const fetchSingleNote = async () => {
       try {
-        const response = await axios.get(`${SERVER_URL}/${id}`);
+        const response = await axios.get(`${SERVER_URL}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
         setFormData({
           title: response.data.title,
           content: response.data.content,
@@ -47,9 +61,18 @@ const UpdateNotePage = () => {
       return toast.error("Title and notes cannot be empty");
     }
     try {
-      const response = await axios.patch(`${SERVER_URL}/${id}`, {
-        ...formData,
-      });
+      const response = await axios.patch(
+        `${SERVER_URL}/${id}`,
+        {
+          ...formData,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (response.status === 200) {
         toast.success("Note updated successfully");
       } else {

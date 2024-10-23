@@ -5,6 +5,8 @@ import sanitizeHtml from "sanitize-html";
 export const getAllNotes = async (req: Request, res: Response) => {
   const { id } = req.params;
 
+  // Remove this delay in production environment 
+  // This is added for development environments
   setTimeout(async() => {
     try {
       const notes = await prisma.note.findMany({
@@ -21,7 +23,7 @@ export const getAllNotes = async (req: Request, res: Response) => {
         msg: "something went wrong",
       });
     }
-  }, 500);
+  }, 500); // added settime-out delay to test frontend loading functionality
 };
 
 export const getSingleNote = async (req: Request, res: Response) => {

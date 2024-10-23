@@ -32,6 +32,10 @@ const useRegister = () => {
           JSON.stringify({
             email: response.data.email,
             token: response.data.token,
+            id: response.data.id,
+            name: response.data.name,
+            createdAt : response.data.createdAt,
+            updatedAt : response.data.updatedAt
           })
         );
 

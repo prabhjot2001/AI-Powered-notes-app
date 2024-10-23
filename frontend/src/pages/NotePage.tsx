@@ -35,6 +35,7 @@ const NotePage = () => {
   if (!storedData) {
     console.error("No token found");
     toast.error("Not authenticated. Please log in.");
+    navigate("/demo");
     return;
   }
 

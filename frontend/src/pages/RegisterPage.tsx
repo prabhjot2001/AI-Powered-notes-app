@@ -1,12 +1,20 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useRegister from "@/hooks/useRegister";
 import toast from "react-hot-toast";
 import { LoaderCircle } from "lucide-react";
+import { useAuthContext } from "@/hooks/useAuthContext";
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+  const { user } = useAuthContext();
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user]);
   const { register, isLoading, error, success } = useRegister();
   const [formData, setFormData] = useState({
     name: "",
@@ -33,6 +41,7 @@ const RegisterPage = () => {
   useEffect(() => {
     if (success) {
       toast.success(success);
+      navigate("/");
     }
   }, [success]);
 

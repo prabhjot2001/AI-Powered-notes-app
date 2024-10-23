@@ -4,15 +4,19 @@ import SortBy from "@/components/custom/SortBy";
 import useNotesContext from "@/hooks/useNotesContext";
 import Notes from "@/components/custom/Notes";
 import toast from "react-hot-toast";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const { notes, dispatch } = useNotesContext();
-
+  const { user } = useAuthContext();
+  const [loading, setLoading] = useState<boolean | null>(null);
+  const navigate = useNavigate();
   useEffect(() => {
     const storedData = localStorage.getItem("notes-user-token");
 
     if (!storedData) {
-      console.error("No token fou5nd");
+      console.error("No token found");
       toast.error("Not authenticated. Please log in.");
       return;
     }
@@ -26,7 +30,8 @@ const HomePage = () => {
     }
 
     const fetchAllNotes = async () => {
-      const response = await fetch(`${SERVER_URL}`, {
+      setLoading(true);
+      const response = await fetch(`${SERVER_URL}/user/${user.id}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -37,10 +42,13 @@ const HomePage = () => {
 
       if (response.status === 401) {
         toast.error("Unauthorized, cannot access notes");
+        setLoading(false);
+        navigate("/demo");
       }
 
       if (response.ok) {
         dispatch({ type: "SET_NOTES", payload: json });
+        setLoading(false);
       }
     };
 
@@ -57,7 +65,7 @@ const HomePage = () => {
         <SortBy />
       </div>
       {/* notes component, rendering all notes */}
-      <Notes notes={notes} dispatch={dispatch} />
+      <Notes notes={notes} dispatch={dispatch} loading={loading} />
     </main>
   );
 };

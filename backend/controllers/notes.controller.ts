@@ -3,18 +3,25 @@ import { prisma } from "../prisma_client/prisma";
 import sanitizeHtml from "sanitize-html";
 
 export const getAllNotes = async (req: Request, res: Response) => {
-  try {
-    const notes = await prisma.note.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-    res.status(200).json(notes);
-  } catch (error) {
-    res.status(400).json({
-      msg: "something went wrong",
-    });
-  }
+  const { id } = req.params;
+
+  setTimeout(async() => {
+    try {
+      const notes = await prisma.note.findMany({
+        where: {
+          userId: id,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+      res.status(200).json(notes);
+    } catch (error) {
+      res.status(400).json({
+        msg: "something went wrong",
+      });
+    }
+  }, 500);
 };
 
 export const getSingleNote = async (req: Request, res: Response) => {
@@ -36,13 +43,14 @@ export const getSingleNote = async (req: Request, res: Response) => {
 };
 
 export const createNote = async (req: Request, res: Response) => {
-  const { title, content } = req.body;
+  const { title, content, id } = req.body;
   const sanitizedContent = sanitizeHtml(content);
   try {
     const note = await prisma.note.create({
       data: {
         title: title,
         content: content,
+        userId: id,
       },
     });
 

@@ -11,7 +11,7 @@ import VerifyUser from "../middleware/VerifyUser";
 const router = express.Router();
 
 router.use(VerifyUser);
-router.get("/", getAllNotes);
+router.get("/user/:id", getAllNotes);
 router.get("/:id", getSingleNote);
 router.post("/", createNote);
 router.delete("/:id", deleteNote);

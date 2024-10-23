@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "@/constants/env";
 import toast from "react-hot-toast";
@@ -11,10 +11,11 @@ import toast from "react-hot-toast";
 const UpdateNotePage = () => {
   const { id } = useParams();
   const storedData = localStorage.getItem("notes-user-token");
-
+  const navigate = useNavigate();
   if (!storedData) {
     console.error("No token found");
     toast.error("Not authenticated. Please log in.");
+    navigate("/demo");
     return;
   }
 

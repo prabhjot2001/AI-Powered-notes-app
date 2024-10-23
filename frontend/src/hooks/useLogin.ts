@@ -30,6 +30,9 @@ const useLogin = () => {
             email: response.data.email,
             token: response.data.token,
             name: response.data.name,
+            id: response.data.id,
+            createdAt: response.data.createdAt,
+            updatedAt: response.data.updatedAt,
           })
         );
 

@@ -1,12 +1,20 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useLogin from "@/hooks/useLogin";
 import toast from "react-hot-toast";
 import { LoaderCircle } from "lucide-react";
+import { useAuthContext } from "@/hooks/useAuthContext";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const { user } = useAuthContext();
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user]);
   const { login, isLoading, error, success } = useLogin();
   const [formData, setFormData] = useState({
     email: "",
@@ -33,6 +41,7 @@ const LoginPage = () => {
   useEffect(() => {
     if (success) {
       toast.success(success);
+      navigate("/");
     }
   }, [success]);
 

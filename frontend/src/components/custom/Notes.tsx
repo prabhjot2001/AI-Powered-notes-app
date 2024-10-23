@@ -5,11 +5,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Ellipsis } from "lucide-react";
+import { ChevronRight, Ellipsis, Ghost, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { SERVER_URL } from "@/constants/env";
+import { useAuthContext } from "@/hooks/useAuthContext";
 
 type PropsType = {
   notes: {
@@ -20,8 +21,10 @@ type PropsType = {
     updatedAt: string;
   }[];
   dispatch: (action: any) => void;
+  loading: boolean | null;
 };
-const Notes = ({ notes, dispatch }: PropsType) => {
+const Notes = ({ notes, dispatch, loading }: PropsType) => {
+  const { user } = useAuthContext();
   const storedData = localStorage.getItem("notes-user-token");
 
   if (!storedData) {
@@ -47,6 +50,10 @@ const Notes = ({ notes, dispatch }: PropsType) => {
       toast.error("Failed to delete the note");
       console.error("Delete error:", error);
     }
+  }
+
+  if (loading === null) {
+    return null;
   }
   return (
     <div className="flex flex-col md:flex-row md:justify-around md:flex-wrap gap-2">
@@ -104,12 +111,37 @@ const Notes = ({ notes, dispatch }: PropsType) => {
           </div>
         ))}
 
-      {!notes ||
-        (notes.length <= 0 && (
-          <div>
-            <img src="" />
+      {user && loading && notes.length <= 0 ? (
+        <div className="space-y-4 mt-20 items-center flex flex-col">
+          <Loader2 size={30} className="animate-spin text-muted-foreground" />
+          <p className="text-xl text-muted-foreground text-center">
+            Sit back and relax, we're fetching your notes!
+          </p>
+        </div>
+      ) : (
+        !loading &&
+        user &&
+        notes.length <= 0 && (
+          <div className="space-y-4 mt-20 items-center flex flex-col">
+            <Ghost
+              strokeWidth={1}
+              size={80}
+              className="text-muted-foreground"
+            />
+            <div>
+              <p className="text-xl text-muted-foreground text-center">
+                Oh! It seems like there are no notes.
+              </p>
+              <p className="text-xl text-muted-foreground text-center">
+                Start by adding note.
+              </p>
+            </div>
+            <Button asChild>
+              <Link to="/add-note">Add new note</Link>
+            </Button>
           </div>
-        ))}
+        )
+      )}
     </div>
   );
 };

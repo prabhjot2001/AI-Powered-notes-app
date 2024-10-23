@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import { SERVER_URL } from "@/constants/env";
 import toast from "react-hot-toast";
+import { useAuthContext } from "@/hooks/useAuthContext";
 
 const AddNotePage = () => {
   const storedData = localStorage.getItem("notes-user-token");
-
+  const { user } = useAuthContext();
   if (!storedData) {
     console.error("No token found");
     toast.error("Not authenticated. Please log in.");
@@ -19,7 +20,11 @@ const AddNotePage = () => {
   const [formData, setFormData] = useState({
     title: "",
     content: "",
+    id: "",
   });
+  useEffect(() => {
+    setFormData({ ...formData, id: user.id });
+  }, []);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -53,7 +58,7 @@ const AddNotePage = () => {
       });
 
       if (response.ok) {
-        setFormData({ title: "", content: "" });
+        setFormData({ ...formData, title: "", content: "" });
         toast.success("Note is added");
       } else {
         toast.error("Failed to add note");

@@ -16,7 +16,7 @@ const formatUser = (user: {
     ...user,
     token: generateJWTtoken(user.id),
     password: undefined,
-    id: undefined,
+    id: user.id
   };
 };
 

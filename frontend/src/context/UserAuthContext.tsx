@@ -1,4 +1,4 @@
-import { createContext, useEffect, useReducer } from "react";
+import { createContext, useEffect, useReducer, useState } from "react";
 
 export const UserAuthContext = createContext(null);
 
@@ -26,23 +26,22 @@ const authReducer = (state, action) => {
 
 const UserAuthContextProvider = ({ children }: PropsType) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
-    // Check local storage for user token on mount
     const storedData = localStorage.getItem("notes-user-token");
     if (storedData) {
       const user = JSON.parse(storedData);
       dispatch({ type: "LOGIN", payload: user });
     }
+    setLoading(false); // Set loading to false once user data is retrieved
   }, []);
 
-  // Function to handle login and set token
   const loginUser = (userData) => {
     localStorage.setItem("notes-user-token", JSON.stringify(userData));
     dispatch({ type: "LOGIN", payload: userData });
   };
 
-  // Function to handle logout and remove token
   const logoutUser = () => {
     localStorage.removeItem("notes-user-token");
     dispatch({ type: "LOGOUT" });
@@ -50,7 +49,7 @@ const UserAuthContextProvider = ({ children }: PropsType) => {
 
   return (
     <UserAuthContext.Provider
-      value={{ ...state, dispatch, loginUser, logoutUser }}
+      value={{ ...state, dispatch, loginUser, logoutUser, loading }}
     >
       {children}
     </UserAuthContext.Provider>

@@ -30,32 +30,30 @@ export const getAllNotes = async (req: Request, res: Response) => {
   const { id } = req.params;
   const search = (req.query.search as string) || "";
 
-  setTimeout(async () => {
-    try {
-      const notes = await prisma.note.findMany({
-        where: {
-          userId: id,
-          OR: [
-            {
-              title: {
-                contains: search,
-                // mode: "insensitive" as const,
-              },
+  try {
+    const notes = await prisma.note.findMany({
+      where: {
+        userId: id,
+        OR: [
+          {
+            title: {
+              contains: search,
+              // mode: "insensitive" as const,
             },
-            {
-              content: {
-                contains: search,
-                // mode: "insensitive" as const,
-              },
+          },
+          {
+            content: {
+              contains: search,
+              // mode: "insensitive" as const,
             },
-          ],
-        },
-      });
-      res.status(200).json(notes);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch notes" });
-    }
-  }, 2000);
+          },
+        ],
+      },
+    });
+    res.status(200).json(notes);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch notes" });
+  }
 };
 
 export const getSingleNote = async (req: Request, res: Response) => {

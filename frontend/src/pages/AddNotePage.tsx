@@ -1,11 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import { SERVER_URL } from "@/constants/env";
 import toast from "react-hot-toast";
 import { useAuthContext } from "@/hooks/useAuthContext";
+import hljs from "highlight.js";
+import "highlight.js/styles/github.css";
+
+
+ReactQuill.Quill.register(
+  "formats/code-block",
+  ReactQuill.Quill.import("formats/code-block")
+);
+
+
+const modules = {
+  syntax: {
+    highlight: (text) => hljs.highlightAuto(text).value,
+  },
+  toolbar: [
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["code-block"],
+  ],
+};
+
 
 const AddNotePage = () => {
   const storedData = localStorage.getItem("notes-user-token");
@@ -75,12 +96,13 @@ const AddNotePage = () => {
         Add note
       </h1>
       <div className="min-h-max flex flex-col py-10">
-        <form className="max-w-md space-y-2" onSubmit={handleSubmit}>
-          <Input
-            placeholder="Title"
+        <form className="space-y-2" onSubmit={handleSubmit}>
+          <input
+            placeholder="Title here..."
             name="title"
             value={formData.title}
             onChange={handleChange}
+            className="bg-background text-3xl font-semibold text-muted-foreground focus:outline-none"
           />
 
           <ReactQuill
@@ -88,6 +110,7 @@ const AddNotePage = () => {
             value={formData.content}
             onChange={handleContentChange}
             placeholder="Your note here..."
+            modules={modules}
             className="rounded-md"
           />
           <Button type="submit">Submit</Button>

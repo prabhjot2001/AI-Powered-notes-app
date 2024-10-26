@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "@/constants/env";
-import { Ellipsis } from "lucide-react";
+import { Bookmark, Ellipsis } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/custom/Modal";
 import { Link } from "react-router-dom";
@@ -13,12 +13,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-// type NoteType = {};
+
 type NoteType = {
   title: string;
   content: string;
   createdAt: string;
   updatedAt: string;
+  isBookmarked: boolean;
 };
 
 const initialNote: NoteType = {
@@ -26,6 +27,7 @@ const initialNote: NoteType = {
   content: "",
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
+  isBookmarked : false
 };
 
 const NotePage = () => {
@@ -56,7 +58,7 @@ const NotePage = () => {
     fetchSingleNote();
   }, []);
 
-  //modal
+
   const [isModalOpen, setModalOpen] = useState(false);
 
   const handleOpen = () => setModalOpen(true);
@@ -76,32 +78,69 @@ const NotePage = () => {
     }
   };
 
+  const handleBookmark = async () => {
+    try {
+      const response = await axios.patch(
+        `${SERVER_URL}/${id}/bookmark`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setNote((prevNote) => ({
+          ...prevNote,
+          isBookmarked: !prevNote.isBookmarked,
+        }));
+        toast.success(
+          `Note ${response.data.isBookmarked ? "bookmarked" : "unbookmarked"}`
+        );
+      } else {
+        toast.error("Failed to update bookmark status");
+      }
+    } catch (error) {
+      toast.error("An error occurred while updating bookmark status");
+    }
+  };
+
   return (
     <div>
-      <div className="relative flex justify-end pr-2">
-        <Popover>
-          <PopoverTrigger>
-            <Ellipsis />
-          </PopoverTrigger>
-          <PopoverContent className="flex flex-col gap-2 max-w-max p-2 z-10">
-            <Button
-              variant={"destructive"}
-              size={"sm"}
-              className="text-xs"
-              onClick={() => handleOpen()}
-            >
-              Delete
-            </Button>
-            <Button
-              asChild
-              variant={"secondary"}
-              size={"sm"}
-              className="text-xs"
-            >
-              <Link to={`/update-note/${id}`}>Update</Link>
-            </Button>
-          </PopoverContent>
-        </Popover>
+      <div className="relative flex  justify-end pr-2">
+        <div className="flex gap-4">
+          <Bookmark
+            onClick={handleBookmark}
+            className={`hover:cursor-pointer ${
+              note.isBookmarked ? "fill-primary text-primary" : ""
+            }`}
+          />
+          <Popover>
+            <PopoverTrigger>
+              <Ellipsis />
+            </PopoverTrigger>
+            <PopoverContent className="flex flex-col gap-2 max-w-max p-2 z-10">
+              <Button
+                variant={"destructive"}
+                size={"sm"}
+                className="text-xs"
+                onClick={() => handleOpen()}
+              >
+                Delete
+              </Button>
+              <Button
+                asChild
+                variant={"secondary"}
+                size={"sm"}
+                className="text-xs"
+              >
+                <Link to={`/update-note/${id}`}>Update</Link>
+              </Button>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
       <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
         {note.title}

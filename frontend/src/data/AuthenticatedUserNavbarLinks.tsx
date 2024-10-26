@@ -1,4 +1,4 @@
-import { House, User, Plus } from "lucide-react";
+import { House, User, Plus, Bookmark } from "lucide-react";
 
 const AuthenticatedUserNavbarLinks = [
   {
@@ -12,6 +12,13 @@ const AuthenticatedUserNavbarLinks = [
     path: "/add-note",
     onClick: () => {},
     icon: <Plus className="w-4" />,
+  },
+
+  {
+    link: "bookmarks",
+    path: "/bookmarked-notes",
+    onClick: () => {},
+    icon: <Bookmark className="w-4" />,
   },
 
   {

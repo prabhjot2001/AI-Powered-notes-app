@@ -2,28 +2,60 @@ import type { Request, Response } from "express";
 import { prisma } from "../prisma_client/prisma";
 import sanitizeHtml from "sanitize-html";
 
-export const getAllNotes = async (req: Request, res: Response) => {
-  const { id } = req.params;
+// export const getAllNotes = async (req: Request, res: Response) => {
+//   const { id } = req.params;
+//   // Remove this delay in production environment
+//   // I've added for development environments
+//   setTimeout(async() => {
+//     try {
+//       const notes = await prisma.note.findMany({
+//         where: {
+//           userId: id,
+//         },
+//         orderBy: {
+//           createdAt: "desc",
+//         },
+//       });
+//       res.status(200).json(notes);
+//     } catch (error) {
+//       res.status(400).json({
+//         msg: "something went wrong",
+//       });
+//     }
+//   }, 500); // added settime-out delay to just test frontend loading functionality
+// };
 
-  // Remove this delay in production environment 
-  // This is added for development environments
-  setTimeout(async() => {
+export const getAllNotes = async (req: Request, res: Response) => {
+  // console.log("hitting getallnotes")
+  const { id } = req.params;
+  const search = (req.query.search as string) || "";
+
+  setTimeout(async () => {
     try {
       const notes = await prisma.note.findMany({
         where: {
           userId: id,
-        },
-        orderBy: {
-          createdAt: "desc",
+          OR: [
+            {
+              title: {
+                contains: search,
+                // mode: "insensitive" as const,
+              },
+            },
+            {
+              content: {
+                contains: search,
+                // mode: "insensitive" as const,
+              },
+            },
+          ],
         },
       });
       res.status(200).json(notes);
     } catch (error) {
-      res.status(400).json({
-        msg: "something went wrong",
-      });
+      res.status(500).json({ error: "Failed to fetch notes" });
     }
-  }, 500); // added settime-out delay to test frontend loading functionality
+  }, 2000);
 };
 
 export const getSingleNote = async (req: Request, res: Response) => {
@@ -105,5 +137,27 @@ export const updateNote = async (req: Request, res: Response) => {
     res.status(400).json({
       msg: "something went wrong",
     });
+  }
+};
+
+export const toggleBookmark = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const note = await prisma.note.findUnique({ where: { id } });
+    if (!note) {
+      return res.status(404).json({ msg: "Note is not found" });
+    }
+
+    const updatedNote = await prisma.note.update({
+      where: { id },
+      data: { isBookmarked: !note.isBookmarked },
+    });
+
+    res.status(200).json(updatedNote);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ msg: "Could not toggle bookmark status, Internal sever error" });
   }
 };

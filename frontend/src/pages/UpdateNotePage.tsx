@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
@@ -7,6 +6,25 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "@/constants/env";
 import toast from "react-hot-toast";
+import hljs from "highlight.js";
+import "highlight.js/styles/github.css";
+
+ReactQuill.Quill.register(
+  "formats/code-block",
+  ReactQuill.Quill.import("formats/code-block")
+);
+
+const modules = {
+  syntax: {
+    highlight: (text) => hljs.highlightAuto(text).value,
+  },
+  toolbar: [
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["code-block"],
+  ],
+};
 
 const UpdateNotePage = () => {
   const { id } = useParams();
@@ -90,18 +108,20 @@ const UpdateNotePage = () => {
         Update note
       </h1>
       <div className="min-h-max flex flex-col py-10">
-        <form className="max-w-md space-y-2" onSubmit={handleSubmit}>
-          <Input
+        <form className="space-y-2" onSubmit={handleSubmit}>
+          <input
             placeholder="Title"
             name="title"
             value={formData.title}
             onChange={handleChange}
+            className="bg-background text-3xl font-semibold text-muted-foreground focus:outline-none"
           />
 
           <ReactQuill
             theme="snow"
             value={formData.content}
             onChange={handleContentChange}
+            modules={modules}
             placeholder="Your note here..."
           />
           <Button type="submit">Update</Button>

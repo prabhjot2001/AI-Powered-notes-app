@@ -6,12 +6,16 @@ import Notes from "@/components/custom/Notes";
 import toast from "react-hot-toast";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 const HomePage = () => {
   const { notes, dispatch } = useNotesContext();
   const { user } = useAuthContext();
   const [loading, setLoading] = useState<boolean | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+
   useEffect(() => {
     const storedData = localStorage.getItem("notes-user-token");
 
@@ -53,7 +57,17 @@ const HomePage = () => {
     };
 
     fetchAllNotes();
-  }, [dispatch]);
+  }, [dispatch, navigate, user.id]);
+
+  const filteredNotes = notes.filter(
+    (note) =>
+      note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const clearSearch = () => {
+    setSearchQuery("");
+  };
 
   return (
     <main className="">
@@ -61,11 +75,38 @@ const HomePage = () => {
         <h1 className="scroll-m-20 text-2xl font-bold tracking-tight lg:text-3xl">
           All Notes
         </h1>
-        {/* sorting component */}
-        <SortBy />
+
+        <div className="flex items-center gap-4">
+          <div className="flex items-center">
+            <input
+              type="text"
+              placeholder="Search notes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="hidden sm:block border-b bg-background py-1 focus:outline-none focus:border-primary"
+            />
+            {searchQuery && (
+              <Button
+                variant="secondary"
+                onClick={clearSearch}
+                className="ml-2 flex items-center gap-2"
+              >
+                Clear <X className="w-4 text-muted-foreground" />
+              </Button>
+            )}
+          </div>
+          {/* <<<  Sorting component is here  >>> */}
+          <SortBy />
+        </div>
       </div>
-      {/* notes component, rendering all notes */}
-      <Notes notes={notes} dispatch={dispatch} loading={loading} />
+      {/* Notes component, rendering filtered notes */}
+      <Notes
+        notes={filteredNotes}
+        allnotes={notes}
+        dispatch={dispatch}
+        loading={loading}
+        searchQuery={searchQuery}
+      />
     </main>
   );
 };

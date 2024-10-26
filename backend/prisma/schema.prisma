@@ -14,19 +14,20 @@ datasource db {
 }
 
 model Note {
-  id        String   @id @default(cuid())
-  title     String   @db.VarChar(255)
-  content   String?  @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  User   User?   @relation(fields: [userId], references: [id])
-  userId String?
+  id           String   @id @default(cuid())
+  title        String   @db.VarChar(255)
+  content      String?  @db.Text
+  isBookmarked Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  User         User?    @relation(fields: [userId], references: [id])
+  userId       String?
 }
 
 model User {
   id        String   @id @default(cuid())
   name      String   @db.VarChar(255)
-  email     String    @unique  @db.VarChar(320)
+  email     String   @unique @db.VarChar(320)
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

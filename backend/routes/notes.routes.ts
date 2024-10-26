@@ -5,6 +5,7 @@ import {
   getAllNotes,
   getSingleNote,
   updateNote,
+  toggleBookmark
 } from "../controllers/notes.controller";
 import VerifyUser from "../middleware/VerifyUser";
 
@@ -16,5 +17,6 @@ router.get("/:id", getSingleNote);
 router.post("/", createNote);
 router.delete("/:id", deleteNote);
 router.patch("/:id", updateNote);
+router.patch("/:id/bookmark", toggleBookmark); 
 
 export default router;

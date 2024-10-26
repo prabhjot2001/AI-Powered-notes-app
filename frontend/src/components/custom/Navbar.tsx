@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import MobileNavbar from "./MobileNavbar";
-import { LogOut, User } from "lucide-react";
+import { Bookmark, LogOut, User } from "lucide-react";
 
 const Navbar = () => {
   const { user } = useAuthContext();
@@ -78,6 +78,11 @@ const Navbar = () => {
                   {user.email}
                 </small>
                 <hr />
+                <Link to={"/bookmarked-notes"} className="hover:underline">
+                  <Button variant="ghost" className="icon-btn">
+                    bookmarks <Bookmark className="w-4" />
+                  </Button>
+                </Link>
                 <Link to={"/user-profile"} className="hover:underline">
                   <Button variant="ghost" className="icon-btn">
                     profile <User className="w-4" />

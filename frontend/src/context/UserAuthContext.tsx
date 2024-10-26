@@ -1,4 +1,5 @@
 import { createContext, useEffect, useReducer, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export const UserAuthContext = createContext(null);
 
@@ -12,29 +13,43 @@ const initialState = {
 
 const authReducer = (state, action) => {
   switch (action.type) {
-    case "LOGIN": {
+    case "LOGIN":
       return { user: action.payload };
-    }
-    case "LOGOUT": {
+    case "LOGOUT":
       return { user: null };
-    }
-    default: {
+    default:
       return state;
-    }
+  }
+};
+
+const isTokenExpired = (token) => {
+  try {
+    const decodedToken = jwtDecode(token);
+    return decodedToken.exp * 1000 < Date.now();
+  } catch (error) {
+    console.error("Invalid token", error);
+    return true; 
   }
 };
 
 const UserAuthContextProvider = ({ children }: PropsType) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedData = localStorage.getItem("notes-user-token");
+
     if (storedData) {
       const user = JSON.parse(storedData);
-      dispatch({ type: "LOGIN", payload: user });
+
+      if (isTokenExpired(user.token)) {
+        logoutUser();
+      } else {
+        dispatch({ type: "LOGIN", payload: user });
+      }
     }
-    setLoading(false); // Set loading to false once user data is retrieved
+
+    setLoading(false);
   }, []);
 
   const loginUser = (userData) => {
@@ -51,7 +66,7 @@ const UserAuthContextProvider = ({ children }: PropsType) => {
     <UserAuthContext.Provider
       value={{ ...state, dispatch, loginUser, logoutUser, loading }}
     >
-      {children}
+      {!loading && children}
     </UserAuthContext.Provider>
   );
 };

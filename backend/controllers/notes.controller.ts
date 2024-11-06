@@ -2,29 +2,6 @@ import type { Request, Response } from "express";
 import { prisma } from "../prisma_client/prisma";
 import sanitizeHtml from "sanitize-html";
 
-// export const getAllNotes = async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   // Remove this delay in production environment
-//   // I've added for development environments
-//   setTimeout(async() => {
-//     try {
-//       const notes = await prisma.note.findMany({
-//         where: {
-//           userId: id,
-//         },
-//         orderBy: {
-//           createdAt: "desc",
-//         },
-//       });
-//       res.status(200).json(notes);
-//     } catch (error) {
-//       res.status(400).json({
-//         msg: "something went wrong",
-//       });
-//     }
-//   }, 500); // added settime-out delay to just test frontend loading functionality
-// };
-
 export const getAllNotes = async (req: Request, res: Response) => {
   // console.log("hitting getallnotes")
   const { id } = req.params;

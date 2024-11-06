@@ -10,12 +10,11 @@ const VerifyUser = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(401).json({ msg: "Auth token required" });
   }
 
-  // Ensure the token follows the "Bearer <token>" format
   if (!authorization.startsWith("Bearer ")) {
     return res.status(400).json({ msg: "Token format is invalid" });
   }
 
-  const token = authorization.split(" ")[1];  // Extract token
+  const token = authorization.split(" ")[1];  // Extracting token
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);  // Decode token
@@ -28,9 +27,9 @@ const VerifyUser = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     req.user = user?.id;
-    next();  // Proceed to next middleware or route handler
+    next();  // Proceeding to next middleware or route handler
   } catch (error: any) {
-    console.log("JWT Error:", error.message);  // Log error details
+    console.log("JWT Error:", error.message); 
     return res.status(401).json({ msg: "Unauthorized" });
   }
 };

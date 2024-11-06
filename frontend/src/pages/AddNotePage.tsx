@@ -2,18 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
-import { SERVER_URL } from "@/constants/env";
+import { SERVER_AI_URL, SERVER_URL } from "@/constants/env";
 import toast from "react-hot-toast";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
-
+import { Brain, Loader, LoaderCircle } from "lucide-react";
 
 ReactQuill.Quill.register(
   "formats/code-block",
   ReactQuill.Quill.import("formats/code-block")
 );
-
 
 const modules = {
   syntax: {
@@ -27,9 +26,9 @@ const modules = {
   ],
 };
 
-
 const AddNotePage = () => {
   const storedData = localStorage.getItem("notes-user-token");
+  const [loading, setLoading] = useState(false);
   const { user } = useAuthContext();
   if (!storedData) {
     console.error("No token found");
@@ -90,6 +89,41 @@ const AddNotePage = () => {
     }
   }
 
+  const handleAiResponse = async () => {
+    setLoading(true);
+
+    // Check if the title is empty
+    if (!formData.title) {
+      setLoading(false);
+      return toast.error("Title can't be empty");
+    }
+
+    try {
+     
+      const response = await fetch(`${SERVER_AI_URL}/generate-note`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ topic: formData.title }), 
+      });
+
+      if (response.ok) {
+        const aiData = await response.json(); 
+        setFormData({ ...formData, content: aiData.note }); 
+        toast.success("Note generated successfully!");
+      } else {
+        toast.error("Failed to generate note");
+      }
+    } catch (error) {
+      console.error("An error occurred:", error); 
+      toast.error("An error occurred while fetching AI response"); 
+    } finally {
+      setLoading(false); 
+    }
+  };
+
   return (
     <>
       <h1 className="scroll-m-20 text-2xl font-bold tracking-tight lg:text-3xl">
@@ -97,13 +131,26 @@ const AddNotePage = () => {
       </h1>
       <div className="min-h-max flex flex-col py-10">
         <form className="space-y-2" onSubmit={handleSubmit}>
-          <input
-            placeholder="Title here..."
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="bg-background text-3xl font-semibold text-muted-foreground focus:outline-none"
-          />
+          <div className="flex items-center gap-2 justify-between">
+            <input
+              placeholder="Title here..."
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className="bg-background sm:text-3xl font-semibold text-muted-foreground focus:outline-none"
+            />
+            <Button
+              disabled={loading}
+              type="button"
+              onClick={handleAiResponse}
+              variant="outline"
+              className="flex items-center gap-2 text-white hover:text-white bg-gradient-to-tr from-violet-500 to-orange-300 text-base focus:outline-none"
+            >
+              {!loading && <Brain className="w-4" />}{" "}
+              {loading && <LoaderCircle className="w-4 animate-spin" />}
+              {loading ? "Loading..." : "Get AI help"}
+            </Button>
+          </div>
 
           <ReactQuill
             theme="snow"
@@ -113,7 +160,9 @@ const AddNotePage = () => {
             modules={modules}
             className="rounded-md"
           />
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={loading}>
+            Submit
+          </Button>
         </form>
       </div>
     </>

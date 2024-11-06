@@ -11,5 +11,6 @@ const APP_ORIGIN = getEnv("APP_ORIGIN");
 const TEST_ORIGIN = getEnv("TEST_ORIGIN");
 const URL = getEnv("URL");
 const JWT_SECRET = getEnv("JWT_SECRET");
+const FASTAPI_URL = getEnv("FASTAPI_URL");
 
-export { PORT, APP_ORIGIN, TEST_ORIGIN, URL, JWT_SECRET };
+export { PORT, APP_ORIGIN, TEST_ORIGIN, URL, JWT_SECRET , FASTAPI_URL};

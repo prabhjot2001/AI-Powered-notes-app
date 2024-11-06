@@ -1,0 +1,46 @@
+# app.py
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+
+app = FastAPI()
+
+# Load GPT-NeoX model and tokenizer
+model_name = "EleutherAI/gpt-neox-20b"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(model_name)
+
+# Define request and response data models
+class TextRequest(BaseModel):
+    text: str
+
+class QuestionRequest(BaseModel):
+    question: str
+
+class TopicRequest(BaseModel):
+    topic: str
+
+@app.post("/generate_note")
+async def generate_note(request: TopicRequest):
+    prompt = f"Write a note about: {request.topic}"
+    inputs = tokenizer(prompt, return_tensors="pt")
+    outputs = model.generate(inputs.input_ids, max_length=100)
+    note = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    return {"note": note}
+
+@app.post("/answer_question")
+async def answer_question(request: QuestionRequest):
+    prompt = f"Answer the question: {request.question}"
+    inputs = tokenizer(prompt, return_tensors="pt")
+    outputs = model.generate(inputs.input_ids, max_length=100)
+    answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    return {"answer": answer}
+
+@app.post("/suggest_improvements")
+async def suggest_improvements(request: TextRequest):
+    prompt = f"Suggest improvements for: {request.text}"
+    inputs = tokenizer(prompt, return_tensors="pt")
+    outputs = model.generate(inputs.input_ids, max_length=100)
+    suggestions = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    return {"suggestions": suggestions}

@@ -4,6 +4,7 @@ import cors from "cors";
 import "dotenv/config";
 import notesRoutes from "./routes/notes.routes";
 import userRoutes from "./routes/user.routes";
+import aiRoutes from "./routes/ai_service.routes";
 import cookieParser from "cookie-parser";
 const app = express();
 const port = parseInt(PORT);
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/api/notes", notesRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.listen(port, URL, () => {
   console.log(`Server is up and running...\nServer URL: http:${URL}:${port}`);

@@ -1,5 +1,6 @@
 # Notes App 📝
 
+⭐ Now AI Powered, you can run use AI without internet connection with built in AI 🚀.
 A simple, secure, and organized notes application to help you manage your thoughts and important tasks. Users can register, log in, and create, edit, update, and delete notes. The app offers a clean UI and ensures your notes are safe and easy to access.
 
 ![Notes App Screenshots](https://github.com/prabhjot2001/notes-app/blob/version-1/preview/image%20(6).png)

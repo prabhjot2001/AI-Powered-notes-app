@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { FASTAPI_URL } from "../env"; 
+import { FASTAPI_URL } from "../env";
 import axios from "axios";
 
 // Function to generate a note
@@ -7,7 +7,6 @@ export const generateNote = async (req: Request, res: Response) => {
   try {
     const { topic } = req.body;
 
-   
     const response = await axios.post(`${FASTAPI_URL}/generate_note`, {
       topic: topic,
     });
@@ -23,8 +22,6 @@ export const generateNote = async (req: Request, res: Response) => {
 export const summarizeNote = async (req: Request, res: Response) => {
   try {
     const { content } = req.body;
-
-
     const response = await axios.post(`${FASTAPI_URL}/summarize_note`, {
       content: content,
     });
@@ -36,12 +33,10 @@ export const summarizeNote = async (req: Request, res: Response) => {
   }
 };
 
-
 export const answerQuestion = async (req: Request, res: Response) => {
   try {
-    const { question } = req.body; 
+    const { question } = req.body;
 
- 
     const response = await axios.post(`${FASTAPI_URL}/answer_question`, {
       question: question,
     });
@@ -53,12 +48,10 @@ export const answerQuestion = async (req: Request, res: Response) => {
   }
 };
 
-
 export const suggestImprovements = async (req: Request, res: Response) => {
   try {
-    const { text } = req.body; 
+    const { text } = req.body;
 
-   
     const response = await axios.post(`${FASTAPI_URL}/suggest_improvements`, {
       text: text,
     });

@@ -31,7 +31,7 @@ async def generate_note(request: TopicRequest):
     prompt = f"Explain in detail and concisely how the following works: {request.topic}."
     inputs = tokenizer(prompt, return_tensors="pt")
 
-    # Generate the note with refined settings for focused output
+    # Generate the note with refined settings for focused output, most optimized setting after trying different
     outputs = model.generate(
         inputs.input_ids,
         max_length=200,
@@ -56,7 +56,7 @@ async def summarize_note(request: SummaryRequest):
     # Generate the summary with updated settings
     outputs = model.generate(
         inputs.input_ids,
-        max_length=50,
+        max_length=500,
         num_beams=5,
         no_repeat_ngram_size=2,
         top_k=50,

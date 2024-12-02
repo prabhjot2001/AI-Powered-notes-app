@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { SERVER_URL } from "@/constants/env";
-import { Bookmark, Ellipsis } from "lucide-react";
+import { SERVER_URL, SERVER_AI_URL } from "@/constants/env";
+import { Bookmark, Ellipsis, LoaderCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/custom/Modal";
 import { Link } from "react-router-dom";
@@ -12,7 +12,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
 
 type NoteType = {
   title: string;
@@ -27,12 +26,14 @@ const initialNote: NoteType = {
   content: "",
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
-  isBookmarked : false
+  isBookmarked: false,
 };
 
 const NotePage = () => {
   const navigate = useNavigate();
   const storedData = localStorage.getItem("notes-user-token");
+  const [loading, setLoading] = useState(false);
+  const [summarizedText, setSummarizedText] = useState("");
 
   if (!storedData) {
     console.error("No token found");
@@ -57,7 +58,6 @@ const NotePage = () => {
     };
     fetchSingleNote();
   }, []);
-
 
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -104,6 +104,48 @@ const NotePage = () => {
       }
     } catch (error) {
       toast.error("An error occurred while updating bookmark status");
+    }
+  };
+
+  const extractText = (html) => {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    return doc.body.textContent || "";
+  };
+
+  const handleAiResponse = async () => {
+    setLoading(true);
+
+    // check whether we have note or not
+    if (!note.content) {
+      setLoading(false);
+      return toast.error("Cannot summarize, empty note");
+    }
+    const plainText = extractText(note.content);
+
+    try {
+      const response = await fetch(`${SERVER_AI_URL}/summarize-note`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content: plainText }),
+      });
+
+      // set the summarized text
+      if (response.ok) {
+        const aiData = await response.json();
+        // console.log("AI response is -->", aiData.summary);
+        setSummarizedText(aiData.summary);
+        toast.success("Text summarized successfully!");
+      } else {
+        toast.error("Failed to summarize note");
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      toast.error("An error occurred while fetching AI response");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -159,6 +201,29 @@ const NotePage = () => {
           Last modified on : {note.updatedAt.slice(0, 10)}
         </p>
       </div>
+
+      <div className="mt-4">
+        <Button
+          disabled={loading}
+          type="button"
+          onClick={handleAiResponse}
+          className="bg-gradient-to-r from-orange-600 to-orange-500"
+        >
+          {!loading && <Sparkles className="w-4 mr-2" />}{" "}
+          {loading && <LoaderCircle className="w-4 animate-spin" />}
+          {loading ? "Loading..." : "  Summarize Note"}
+        </Button>
+      </div>
+
+      {/* summarize text will be shown here */}
+      {summarizedText && (
+        <div className="border rounded-md p-4 mt-6 bg-gradient-to-r from-primary/50 to-secondary">
+          <h2 className="scroll-m-20 pb-2 text-xl font-bold tracking-tight first:mt-0">
+            Note Summary
+          </h2>
+          <p>{summarizedText}</p>
+        </div>
+      )}
 
       {/* modal */}
       <Modal

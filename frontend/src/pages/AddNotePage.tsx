@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
-import { Brain, Loader, LoaderCircle } from "lucide-react";
+import {  Loader, LoaderCircle, Sparkles } from "lucide-react";
 
 ReactQuill.Quill.register(
   "formats/code-block",
@@ -143,10 +143,9 @@ const AddNotePage = () => {
               disabled={loading}
               type="button"
               onClick={handleAiResponse}
-              variant="outline"
-              className="flex items-center gap-2 text-white hover:text-white bg-gradient-to-tr from-violet-500 to-orange-300 text-base focus:outline-none"
+              className="flex items-center gap-2 text-white hover:text-white focus:outline-none bg-gradient-to-r from-orange-600 to-orange-500"
             >
-              {!loading && <Brain className="w-4" />}{" "}
+              {!loading && <Sparkles className="w-4" />}{" "}
               {loading && <LoaderCircle className="w-4 animate-spin" />}
               {loading ? "Loading..." : "Get AI help"}
             </Button>

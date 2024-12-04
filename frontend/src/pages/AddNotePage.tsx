@@ -7,7 +7,8 @@ import toast from "react-hot-toast";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
-import {  Loader, LoaderCircle, Sparkles } from "lucide-react";
+import { Loader, LoaderCircle, Sparkles } from "lucide-react";
+import VoiceToText from "@/components/custom/VoiceToText";
 
 ReactQuill.Quill.register(
   "formats/code-block",
@@ -23,12 +24,22 @@ const modules = {
     ["bold", "italic", "underline", "strike"],
     [{ list: "ordered" }, { list: "bullet" }],
     ["code-block"],
+    [{ align: [] }],
+    ["image"],
+    ["link"],
+    ["blockquote"],
+    ["font"],
+    ["color"],
   ],
+  clipboard: {
+    matchVisual: false,
+  },
 };
 
 const AddNotePage = () => {
   const storedData = localStorage.getItem("notes-user-token");
   const [loading, setLoading] = useState(false);
+  const [transcript, setTranscript] = useState<string>("");
   const { user } = useAuthContext();
   if (!storedData) {
     console.error("No token found");
@@ -99,30 +110,31 @@ const AddNotePage = () => {
     }
 
     try {
-     
       const response = await fetch(`${SERVER_AI_URL}/generate-note`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ topic: formData.title }), 
+        body: JSON.stringify({ topic: formData.title }),
       });
 
       if (response.ok) {
-        const aiData = await response.json(); 
-        setFormData({ ...formData, content: aiData.note }); 
+        const aiData = await response.json();
+        setFormData({ ...formData, content: aiData.note });
         toast.success("Note generated successfully!");
       } else {
         toast.error("Failed to generate note");
       }
     } catch (error) {
-      console.error("An error occurred:", error); 
-      toast.error("An error occurred while fetching AI response"); 
+      console.error("An error occurred:", error);
+      toast.error("An error occurred while fetching AI response");
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
+
+  // todo: voice to text integration here
 
   return (
     <>
@@ -143,9 +155,9 @@ const AddNotePage = () => {
               disabled={loading}
               type="button"
               onClick={handleAiResponse}
-              className="flex items-center gap-2 text-white hover:text-white focus:outline-none bg-gradient-to-r from-orange-600 to-orange-500"
+              className="flex items-center gap-2 text-white hover:text-white focus:outline-none"
             >
-              {!loading && <Sparkles className="w-4" />}{" "}
+              {!loading && <Sparkles className="w-4 animate-pulse duration-[2s]" />}{" "}
               {loading && <LoaderCircle className="w-4 animate-spin" />}
               {loading ? "Loading..." : "Get AI help"}
             </Button>
@@ -163,6 +175,8 @@ const AddNotePage = () => {
             Submit
           </Button>
         </form>
+
+        <VoiceToText />
       </div>
     </>
   );

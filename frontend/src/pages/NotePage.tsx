@@ -178,7 +178,7 @@ const NotePage = () => {
                 size={"sm"}
                 className="text-xs"
               >
-                <Link to={`/update-note/${id}`}>Update</Link>
+                <Link to={`/update-note/${id}`}>Edit</Link>
               </Button>
             </PopoverContent>
           </Popover>
@@ -207,9 +207,9 @@ const NotePage = () => {
           disabled={loading}
           type="button"
           onClick={handleAiResponse}
-          className="bg-gradient-to-r from-orange-600 to-orange-500"
+          className=""
         >
-          {!loading && <Sparkles className="w-4 mr-2" />}{" "}
+          {!loading && <Sparkles className="w-4 mr-2 animate-pulse" />}{" "}
           {loading && <LoaderCircle className="w-4 animate-spin" />}
           {loading ? "Loading..." : "  Summarize Note"}
         </Button>
